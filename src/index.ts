@@ -1,11 +1,18 @@
-import BlockChain from "./block/block-chain";
+import express from 'express'
+import bodyParser from "body-parser";
+import router from "./router";
 
-const blockChain = new BlockChain()
+const app = express();
+const port = 5000;
 
-blockChain.addBlock({ foo: 'bar' })
-blockChain.addBlock({ foo: 'buzz' })
-blockChain.addBlock({ foo: 'Aldrin' })
-blockChain.addBlock({ foo: 'Neil' })
-blockChain.addBlock({ foo: 'ArmStrong' })
+app.use(bodyParser.json())
+app.use(bodyParser.raw())
 
-console.log(blockChain.getChain())
+app.use('/api/v1', router)
+app.get('/', (_, res) => {
+    res.status(200).send('HIs')
+})
+
+app.listen(port, () => {
+    console.log(`App is running in http://localhost:${port}`)
+})

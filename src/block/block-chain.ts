@@ -8,7 +8,7 @@ export default class BlockChain {
         this.chain = [Block.genesis()]
     }
 
-    public getChain() {
+    public getChain(): Block[] {
         return this.chain;
     }
 
@@ -41,14 +41,15 @@ export default class BlockChain {
             return false;
         }
 
-        return !blocks.find((block: Block, index) => {
-            if (index === 0) {
+        for (let i = 1; i < blocks.length; i++) {
+            const lastBlock = blocks[i-1];
+            const block = blocks[i];
+
+            if (block.lastHash != lastBlock.hash) {
                 return false;
             }
-
-            const lastBlock = this.chain[index - 1];
-            if (block.lastHash != lastBlock.hash) {
-                return true;
+            if (Math.abs(lastBlock.difficulty - block.difficulty) > 1) {
+                return false;
             }
 
             const generatedHash = generateHash([
@@ -58,9 +59,12 @@ export default class BlockChain {
                 block.nonce,
                 block.difficulty
             ]);
-            return generatedHash != block.hash;
-        });
 
+            if (generatedHash !== block.hash) {
+                return false
+            }
+        }
 
+        return true;
     }
 }

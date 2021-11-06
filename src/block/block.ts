@@ -1,15 +1,16 @@
-import {GENESIS_DATA} from "../config/config";
+import {GENESIS_DATA, MINE_RATE} from "../config/config";
 import {generateHash} from "../utls/crypto-hash";
+import hexToBinary from "../helper/hexToBinary";
 
 export default class Block {
-    timestamp: Date;
+    timestamp: number;
     hash: string;
     lastHash: string;
     data: unknown
     nonce: number
     difficulty: number
 
-    constructor(timestamp: Date, hash: string, lastHash: string, data: unknown, nonce = 0, difficulty = 4 ) {
+    constructor(timestamp: number, hash: string, lastHash: string, data: unknown, nonce = 0, difficulty = 4 ) {
         this.timestamp = timestamp;
         this.hash = hash;
         this.lastHash = lastHash;
@@ -43,19 +44,33 @@ export default class Block {
             GENESIS_DATA.difficulty
         )
     }
-    static mineBlock(lastBlock: Block, data: { [p: string]: any }) {
+    static mineBlock(lastBlock: Block, data: { [p: string]: unknown }) {
         const lastHash = lastBlock.hash;
         let timestamp;
         let hash = '';
-        const difficulty = lastBlock.difficulty
+        let difficulty = lastBlock.difficulty
         let nonce = 0
 
         do {
             nonce++;
-            timestamp = new Date();
+            timestamp = Date.now();
+            difficulty = Block.adjustDifficulty(lastBlock, timestamp)
             hash = generateHash([lastHash, data, timestamp, nonce, difficulty]);
-        } while (hash.substring(0, difficulty) !== '0'.repeat(difficulty))
-        console.log("Block mined:", hash)
+        } while (hexToBinary(hash).substring(0, difficulty) !== '0'.repeat(difficulty))
+
         return new Block(timestamp, hash, lastHash, data, nonce, difficulty)
+    }
+
+    static adjustDifficulty(lastBlock: Block, timestamp: number) {
+        const { difficulty } = lastBlock
+
+        if (lastBlock.difficulty < 1) {
+            return 1;
+        }
+
+        if ((timestamp - lastBlock.timestamp) > MINE_RATE) {
+            return difficulty - 1;
+        }
+        return difficulty + 1;
     }
 }

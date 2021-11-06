@@ -1,7 +1,8 @@
-export const INITIAL_DIFFICULTY = 4
+export const INITIAL_DIFFICULTY = 10;
+export const MINE_RATE = 1000;
 
 export const GENESIS_DATA = {
-    timestamp: new Date('2021-11-02 15:54:24'),
+    timestamp: 1,
     lastHash: '_____',
     hash: 'hash-one',
     difficulty: INITIAL_DIFFICULTY,
