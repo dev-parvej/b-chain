@@ -3,7 +3,6 @@ import bodyParser from "body-parser";
 import router from "./router";
 
 const app = express();
-const port = 5000;
 
 app.use(bodyParser.json())
 app.use(bodyParser.raw())
@@ -13,6 +12,12 @@ app.get('/', (_, res) => {
     res.status(200).send('HIs')
 })
 
-app.listen(port, () => {
-    console.log(`App is running in http://localhost:${port}`)
+let PORT = 5000;
+
+if (process.env.GENERATE_PEER_PORT === 'true') {
+    PORT += Math.ceil(Math.random() * 1000)
+}
+
+app.listen(PORT, () => {
+    console.log(`App is running in http://localhost:${PORT}`)
 })

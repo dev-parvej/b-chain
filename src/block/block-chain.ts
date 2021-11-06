@@ -14,9 +14,11 @@ export default class BlockChain {
 
     public setChain(chain: Block[]) {
         if (chain.length <= this.chain.length) {
+            console.error('Incoming chain must be longer')
             return;
         }
         if (!this.isValid(chain)) {
+            console.error('Incoming chain must be valid')
             return;
         }
         this.chain = chain;
@@ -37,7 +39,7 @@ export default class BlockChain {
     public isValid(chain: Block[] | null = null) {
         const blocks = chain ? chain : this.chain;
 
-        if (blocks[0].isNotSame(Block.genesis())) {
+        if (Block.isNotSame(Block.genesis(), blocks[0])) {
             return false;
         }
 

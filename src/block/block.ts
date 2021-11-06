@@ -1,6 +1,7 @@
 import {GENESIS_DATA, MINE_RATE} from "../config/config";
 import {generateHash} from "../utls/crypto-hash";
 import hexToBinary from "../helper/hexToBinary";
+import {type} from "os";
 
 export default class Block {
     timestamp: number;
@@ -19,19 +20,23 @@ export default class Block {
         this.difficulty = difficulty
     }
 
-    public isSame(block: Block) {
+    public static isSame(block: Block, blockToCompare: Block) {
         const blockKeys = Object.keys(block);
-        const failed = Object.keys(this).filter((key) => {
-            const currentBlock = this as any;
+        const failed = Object.keys(blockToCompare).filter((key) => {
+            const currentBlock = blockToCompare as any;
             const passedBlock = block as any;
+            if (typeof passedBlock[key] === 'object' && typeof currentBlock[key] === 'object') {
+                return !blockKeys.includes(key) ||
+                    JSON.stringify(currentBlock[key]) !== JSON.stringify(passedBlock[key])
+            }
             return !blockKeys.includes(key) || currentBlock[key] !== passedBlock[key]
         });
 
         return !(failed.length)
     }
 
-    isNotSame(block: Block) {
-        return !this.isSame(block)
+    static isNotSame(block: Block, blockToCompare: Block) {
+        return !this.isSame(block, blockToCompare)
     }
 
     static genesis() {
