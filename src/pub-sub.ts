@@ -35,11 +35,14 @@ export default class PubSub {
         if (channel === CHANNEL.BLOCKCHAIN) {
             this.blockChain.setChain(JSON.parse(message))
         }
-        console.log(`Hello from channel '${channel}' with message '${message}'`)
     }
 
     publish(channel: string, message: string) {
-        this.publisher.publish(channel, message)
+        this.subscriber.unsubscribe(channel, () => {
+            this.publisher.publish(channel, message, () => {
+                this.subscriber.subscribe(channel)
+            })
+        })
     }
 
     broadcastChain() {

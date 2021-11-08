@@ -1,11 +1,8 @@
 import express from 'express'
 import bodyParser from "body-parser";
-import router from "./router";
-import request from "request";
+import router, {blockChain, PORT, syncChain} from "./router";
 
 const app = express();
-let PORT = 5000;
-const ROOT_NODE_URL = `http://localhost:${PORT}`
 
 app.use(bodyParser.json())
 app.use(bodyParser.raw())
@@ -14,19 +11,24 @@ app.use('/api/v1', router)
 app.get('/', (_, res) => {
     res.status(200).send('HIs')
 })
-
-const syncChain = () => {
-    request(`${ROOT_NODE_URL}/api/v1/blocks`, (error, response, body) => {
-        if (!error && response.statusCode === 200) {
-
-        }
-    })
-}
+let generated_port = PORT;
 
 if (process.env.GENERATE_PEER_PORT === 'true') {
-    PORT += Math.ceil(Math.random() * 1000)
+    generated_port += Math.ceil(Math.random() * 1000)
 }
 
-app.listen(PORT, () => {
-    console.log(`App is running in http://localhost:${PORT}`)
+app.listen(generated_port, async () => {
+    console.log(`App is running in http://localhost:${generated_port}`)
+    if (generated_port == PORT) {
+        return;
+    }
+    try {
+        const result = JSON.parse(await syncChain() as string)
+        if (result.length === 1) {
+            return;
+        }
+        blockChain.setChain(result)
+    } catch (e) {
+        console.log(e)
+    }
 })
