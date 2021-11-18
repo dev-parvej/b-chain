@@ -1,5 +1,5 @@
 import { createClient, RedisClient } from 'redis';
-import BlockChain from './block/block-chain';
+import BlockChain from '../block/block-chain';
 
 export const CHANNEL = {
   TEST: 'Test',

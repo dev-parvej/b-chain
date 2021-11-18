@@ -1,5 +1,5 @@
 import { Router } from "express";
-import BlockChain from "./block/block-chain";
+import BlockChain from "../block/block-chain";
 import PubSub from "./pub-sub";
 import request from "request";
 
