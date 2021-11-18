@@ -1,5 +1,5 @@
 import {GENESIS_DATA, MINE_RATE} from "../config/config";
-import {generateHash} from "../utls/crypto-hash";
+import {generateHash} from "../helper/crypto-hash";
 import hexToBinary from "../helper/hexToBinary";
 import {type} from "os";
 

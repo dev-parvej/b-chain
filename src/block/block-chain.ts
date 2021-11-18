@@ -1,5 +1,5 @@
 import Block from "./block";
-import {generateHash} from "../utls/crypto-hash";
+import {generateHash} from "../helper/crypto-hash";
 
 export default class BlockChain {
     private chain: Block[] = []
